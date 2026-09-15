@@ -1,0 +1,23 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v8.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v8.0": {
+      "LAB_2_TI_KHMYLKO/1.0.0": {
+        "runtime": {
+          "LAB_2_TI_KHMYLKO.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "LAB_2_TI_KHMYLKO/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}
