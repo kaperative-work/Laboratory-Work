@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Список покупок (SSR)</title>
+  <style>
+    body { font-family: system-ui, -apple-system, sans-serif; max-width: 750px; margin: 2rem auto; padding: 0 1rem; background: #f8fafc; color: #0f172a; }
+    h1 { margin-bottom: 1.5rem; text-align: center; }
+    .card { background: #ffffff; padding: 1.5rem; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-bottom: 2rem; }
+    .form-group { margin-bottom: 1rem; }
+    label { display: block; margin-bottom: 0.35rem; font-weight: 600; font-size: 0.9rem; }
+    input[type="text"], input[type="date"], input[type="file"] { width: 100%; padding: 0.5rem; border: 1px solid #cbd5e1; border-radius: 4px; box-sizing: border-box; }
+    button { background-color: #2563eb; color: white; padding: 0.5rem 1rem; border: none; border-radius: 4px; cursor: pointer; font-size: 0.9rem; }
+    button:hover { background-color: #1d4ed8; }
+    .filters { display: flex; gap: 0.5rem; margin-bottom: 1.5rem; }
+    .filter-btn { padding: 0.4rem 0.8rem; border: 1px solid #cbd5e1; border-radius: 4px; text-decoration: none; color: #334155; background: #ffffff; font-size: 0.9rem; }
+    .filter-btn.active { background-color: #2563eb; color: white; border-color: #2563eb; }
+    .item-list { list-style: none; padding: 0; margin: 0; }
+    .item-card { background: #ffffff; padding: 1rem; border-radius: 6px; border: 1px solid #e2e8f0; margin-bottom: 0.75rem; display: flex; justify-content: space-between; align-items: center; }
+    .item-card.bought { opacity: 0.65; background-color: #f1f5f9; }
+    .item-card.bought .title { text-decoration: line-through; }
+    .item-details { flex-grow: 1; }
+    .item-meta { font-size: 0.85rem; color: #64748b; margin-top: 0.25rem; }
+    .item-actions { display: flex; gap: 0.5rem; align-items: center; }
+    .btn-small { padding: 0.3rem 0.6rem; font-size: 0.8rem; }
+    .btn-danger { background-color: #dc2626; }
+    .btn-danger:hover { background-color: #b91c1c; }
+    .btn-secondary { background-color: #64748b; }
+    .btn-secondary:hover { background-color: #475569; }
+  </style>
+</head>
+<body>
+
+  <h1> Список покупок</h1>
+
+  <!-- Форма добавления покупки -->
+  <div class="card">
+    <h2>Новая позиция</h2>
+    <form action="/add" method="POST" enctype="multipart/form-data">
+      <div class="form-group">
+        <label for="title">Наименование товара *</label>
+        <input type="text" id="title" name="title" placeholder="Например: Хлеб цельнозерновой" required>
+      </div>
+
+      <div class="form-group">
+        <label for="targetDate">Ожидаемая дата покупки</label>
+        <input type="date" id="targetDate" name="targetDate">
+      </div>
+
+      <div class="form-group">
+        <label for="attachment">Прикрепить файл (фото, скидочный купон или чек)</label>
+        <input type="file" id="attachment" name="attachment">
+      </div>
+
+      <button type="submit">Добавить в список</button>
+    </form>
+  </div>
+
+  <!-- Панель фильтрации -->
+  <div class="filters">
+    <a href="/?status=all" class="filter-btn <%= currentFilter === 'all' ? 'active' : '' %>">Все</a>
+    <a href="/?status=pending" class="filter-btn <%= currentFilter === 'pending' ? 'active' : '' %>">Нужно купить</a>
+    <a href="/?status=bought" class="filter-btn <%= currentFilter === 'bought' ? 'active' : '' %>">Куплено</a>
+  </div>
+
+  <!-- Список позиций -->
+  <ul class="item-list">
+    <% if (items.length === 0) { %>
+      <li style="color: #64748b; text-align: center; padding: 1rem;">Список пуст</li>
+    <% } else { %>
+      <% items.forEach(item => { %>
+        <li class="item-card <%= item.status === 'bought' ? 'bought' : '' %>">
+          <div class="item-details">
+            <strong class="title"><%= item.title %></strong>
+            <div class="item-meta">
+              <% if (item.targetDate) { %>
+                 Запланировано на: <%= item.targetDate %> |
+              <% } %>
+              Статус: <strong><%= item.status === 'bought' ? 'Куплено' : 'В планах' %></strong>
+              <% if (item.file) { %>
+                | <a href="<%= item.file %>" target="_blank">Вложение (<%= item.originalFileName %>)</a>
+              <% } %>
+            </div>
+          </div>
+
+          <div class="item-actions">
+            <form action="/toggle-status/<%= item.id %>" method="POST" style="display: inline;">
+              <button type="submit" class="btn-small btn-secondary">
+                <%= item.status === 'bought' ? 'Восстановить' : 'Отметить купленным' %>
+              </button>
+            </form>
+
+            <form action="/delete/<%= item.id %>" method="POST" style="display: inline;">
+              <button type="submit" class="btn-small btn-danger">Удалить</button>
+            </form>
+          </div>
+        </li>
+      <% }); %>
+    <% } %>
+  </ul>
+
+</body>
+</html>
