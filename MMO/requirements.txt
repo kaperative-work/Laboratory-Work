@@ -1,0 +1,10 @@
+ipykernel==6.29.5
+pandas
+numpy
+matplotlib
+python-docx
+pypdf
+reportlab
+pillow
+pyyaml
+openpyxl
