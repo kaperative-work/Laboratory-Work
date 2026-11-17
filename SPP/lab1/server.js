@@ -6,13 +6,12 @@ const fs = require('fs');
 const app = express();
 const PORT = 3000;
 
-// Автоматическое создание папки для загрузки файлов
+
 const uploadDir = path.join(__dirname, 'uploads');
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir);
 }
 
-// Настройка хранилища Multer для загружаемых вложений
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, uploadDir);
@@ -25,26 +24,23 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage });
 
-// Шаблонизатор и Middleware
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
 app.use(express.urlencoded({ extended: true }));
 app.use('/uploads', express.static(uploadDir));
 
-// База данных в памяти
 let shoppingItems = [
   {
     id: '1',
     title: 'Молоко 2.5% и сыр',
-    status: 'pending', // 'pending' или 'bought'
+    status: 'pending', 
     targetDate: '2026-09-20',
     file: null,
     originalFileName: null
   }
 ];
 
-// Маршрут: Отображение списка с фильтрацией
 app.get('/', (req, res) => {
   const filter = req.query.status || 'all';
 
@@ -61,7 +57,7 @@ app.get('/', (req, res) => {
   });
 });
 
-// Маршрут: Добавление позиции через POST-форму
+
 app.post('/add', upload.single('attachment'), (req, res) => {
   const { title, targetDate } = req.body;
 
@@ -80,7 +76,6 @@ app.post('/add', upload.single('attachment'), (req, res) => {
   res.redirect('/');
 });
 
-// Маршрут: Смена статуса (Куплено / Не куплено)
 app.post('/toggle-status/:id', (req, res) => {
   const item = shoppingItems.find(i => i.id === req.params.id);
   if (item) {
@@ -89,7 +84,6 @@ app.post('/toggle-status/:id', (req, res) => {
   res.redirect(req.get('referer') || '/');
 });
 
-// Маршрут: Удаление товара из списка
 app.post('/delete/:id', (req, res) => {
   const index = shoppingItems.findIndex(i => i.id === req.params.id);
   if (index !== -1) {

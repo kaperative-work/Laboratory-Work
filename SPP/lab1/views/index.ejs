@@ -34,7 +34,6 @@
 
   <h1> Список покупок</h1>
 
-  <!-- Форма добавления покупки -->
   <div class="card">
     <h2>Новая позиция</h2>
     <form action="/add" method="POST" enctype="multipart/form-data">
@@ -57,14 +56,13 @@
     </form>
   </div>
 
-  <!-- Панель фильтрации -->
+
   <div class="filters">
     <a href="/?status=all" class="filter-btn <%= currentFilter === 'all' ? 'active' : '' %>">Все</a>
     <a href="/?status=pending" class="filter-btn <%= currentFilter === 'pending' ? 'active' : '' %>">Нужно купить</a>
     <a href="/?status=bought" class="filter-btn <%= currentFilter === 'bought' ? 'active' : '' %>">Куплено</a>
   </div>
 
-  <!-- Список позиций -->
   <ul class="item-list">
     <% if (items.length === 0) { %>
       <li style="color: #64748b; text-align: center; padding: 1rem;">Список пуст</li>
